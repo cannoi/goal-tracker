@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Goal Tracker</title>
+  <link rel="stylesheet" href="style.css">
+<style>.paf-made-by{position:fixed;right:8px;bottom:8px;width:min(72px,12vw);max-width:12vw;height:auto;object-fit:contain;opacity:.5;background:transparent;padding:0;border:0;box-shadow:none;filter:none;pointer-events:none;z-index:30}</style></head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="logo">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="6"></circle><circle cx="12" cy="12" r="2"></circle></svg>
+        <h1>Goal Tracker</h1>
+      </div>
+      <div class="header-actions">
+        <button id="btnNewGoal" class="btn btn-primary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+          New Goal
+        </button>
+      </div>
+    </header>
+
+    <nav class="app-nav">
+      <button class="nav-tab active" data-view="dashboard">Dashboard</button>
+      <button class="nav-tab" data-view="goals">All Goals</button>
+      <button class="nav-tab" data-view="categories">Categories</button>
+    </nav>
+
+    <main class="app-content">
+      <!-- Dashboard View -->
+      <section id="view-dashboard" class="view-section active">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-value" id="statActiveGoals">0</div>
+            <div class="stat-label">Active Goals</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statCompletedGoals">0</div>
+            <div class="stat-label">Completed Goals</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-value" id="statMilestoneProgress">0%</div>
+            <div class="stat-label">Milestone Progress</div>
+          </div>
+        </div>
+
+        <div class="dashboard-section">
+          <h2>Upcoming Goals & Priorities</h2>
+          <div id="dashboardUpcomingList" class="goals-grid">
+            <!-- Loaded dynamically -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Goals View -->
+      <section id="view-goals" class="view-section">
+        <div class="filter-bar">
+          <div class="filter-group">
+            <select id="filterStatus" class="form-select">
+              <option value="">All Statuses</option>
+              <option value="active">Active</option>
+              <option value="completed">Completed</option>
+              <option value="archived">Archived</option>
+            </select>
+            <select id="filterCategory" class="form-select">
+              <option value="">All Categories</option>
+            </select>
+          </div>
+        </div>
+        <div id="goalsList" class="goals-grid">
+          <!-- Loaded dynamically -->
+        </div>
+      </section>
+
+      <!-- Categories View -->
+      <section id="view-categories" class="view-section">
+        <div class="category-layout">
+          <div class="card">
+            <h3>Add New Category</h3>
+            <form id="categoryForm">
+              <div class="form-group">
+                <label for="catName">Category Name</label>
+                <input type="text" id="catName" class="form-control" required placeholder="e.g., Side Projects">
+              </div>
+              <div class="form-group">
+                <label for="catColor">Color</label>
+                <input type="color" id="catColor" class="form-control color-picker" value="#3b82f6">
+              </div>
+              <button type="submit" class="btn btn-primary">Save Category</button>
+            </form>
+          </div>
+          <div class="card">
+            <h3>Existing Categories</h3>
+            <div id="categoriesList" class="categories-list">
+              <!-- Loaded dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Goal Details / Edit Modal -->
+  <div id="goalModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Goal Details</h2>
+        <button class="btn-close" id="modalClose">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="goalForm">
+          <input type="hidden" id="goalId">
+          <div class="form-group">
+            <label for="goalTitleInput">Goal Title *</label>
+            <input type="text" id="goalTitleInput" class="form-control" required placeholder="e.g., Run a Half Marathon">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label for="goalCategoryInput">Category</label>
+              <select id="goalCategoryInput" class="form-select">
+                <option value="">None</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="goalDateInput">Target Date</label>
+              <input type="date" id="goalDateInput" class="form-control">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="goalDescInput">Description / Notes</label>
+            <textarea id="goalDescInput" class="form-control" rows="2" placeholder="Why is this goal important?"></textarea>
+          </div>
+          <div class="form-row status-row" id="goalStatusRow" style="display:none;">
+            <div class="form-group">
+              <label for="goalStatusInput">Status</label>
+              <select id="goalStatusInput" class="form-select">
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="archived">Archived</option>
+              </select>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" id="btnSaveGoal">Save Goal</button>
+        </form>
+
+        <div id="milestonesSection" class="milestones-section" style="display:none;">
+          <h3>Milestones & Action Steps</h3>
+          <form id="milestoneForm" class="milestone-form">
+            <input type="text" id="milestoneTitleInput" class="form-control" placeholder="Add next step..." required>
+            <button type="submit" class="btn btn-secondary">Add</button>
+          </form>
+          <div id="milestonesList" class="milestones-list">
+            <!-- Milestones loaded here -->
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer" id="modalFooterActions">
+        <button id="btnDeleteGoal" class="btn btn-danger" style="display:none;">Delete Goal</button>
+      </div>
+    </div>
+  </div>
+
+  
+
+  <script src="app.js"></script>
+<img class="paf-made-by" src="/made-by.png" alt="Made with App Builder — Pi SoloHost"></body>
+</html>

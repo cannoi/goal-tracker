@@ -1,0 +1,7 @@
+title: "Goal Tracker"
+eyebrow: SoloHost App
+description: "Tạo cho tôi app: Goal Tracker ứng dụng quản lý mục tiêu cá nhân, chia mục tiêu thành các bước và theo dõi tiến độ."
+footer_hint: Ready to run on Pi Desktop SoloHost.
+output_file: .env
+after_save: Saved. Start the app from SoloHost.
+fields: []
